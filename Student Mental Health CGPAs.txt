@@ -1,4 +1,4 @@
-My question for this analysts is "Does student mental health affect CGPA's"? Given that most of the students in the study do not have mental health issues I am not sure how accurate this study would be for predicting if mental health affects CGPAs.
+##My question for this analysts is "Does student mental health affect CGPA's"? Given that most of the students in the study do not have mental health issues I am not sure how accurate this study would be for predicting if mental health affects CGPAs.
 
 [ ]
 from google.colab import drive
