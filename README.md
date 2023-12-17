@@ -1,8 +1,8 @@
 # Student-Mental-Health
-This reposistoriy will look at how student mental health affects cumulative grade point averages of student in higher Ed. It will also look at age and major to see if there is any correlation between these factors using Python coding language.
+This repository will look at how students mental health affects cumulative grade point averages of student in higher Ed. It will also look at age and major to see if there is any correlation between these factors using Python coding language.
 
 Analysis of higher ed. student mental health and CGPAs
-Hypothesis**:  Does Mental health conditions or other factors like age and major affect students cumulative grade point average (CGPAs)?
+Hypothesis:  Does Mental health conditions or other factors like age and major affect students cumulative grade point average (CGPAs)?
 
 Variables:
 
