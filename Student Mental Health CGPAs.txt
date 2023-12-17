@@ -1,396 +1,258 @@
 from google.colab import drive #code to mount Google Drive
 drive.mount('/content/drive')
-Sourced and imported a dataset from Kaggle
-[ ]
+
+# Sourced and imported a dataset from Kaggle
+
 import pandas as pd # importing pandas
-mental_health=pd.read_csv('/content/drive/My Drive/data/student_mental_health_v1 .csv') #uploading dataset
-Hypothesis: Does Mental health conditions affect students CGPAs? I will analyze 4 variables: Panic Disorders, Anxiety, Depression and Treatment and how these variables will affect CGPAs.
+mental_health=pd.read_csv('/content/drive/MyDrive/data/student_mh.csv') #uploading dataset
 
-Why I chose this topic: I currently work as an Enrollment Advisor and I see many variables that affect student sucess and I wanted to know what role mental health plays for the student to better support them sucessfully completing their programs with higher CGPAs.
+**Hypothesis**:  Does Mental health conditions or other factors like age and major affect students cumulative grade point average (CGPAs)?
 
-Pre-cleaning to original data set from Kaggle: Original CGPA column was in rages. I found the mean of CGPAs in Excel and created columns: low, high and Mean CGPA.
+**Variables:**
 
-Also made intial changes to Year of study column, due to inconsistency with the data structure. Some data had Year 1 vs year 1. I standardized this data to Year 1, Year 2, and for all of the year of student column.
+- Cumulative grade point average (CGPA)
+- Depression
+- Anxiety
+- Panic Disorder
+- Treated students
+- Age
+- Major
 
-Data cleansing and data review:
-[ ]
+
+**Why I chose this topic:** I currently work as an Enrollment Advisor and I see many variables that affect student sucess and I wanted to know what role mental health plays for the student to better support them sucessfully completing their programs with higher cumulative grade point average (CGPAs).
+
+# Data cleansing and data review:
+
 mental_health.head() ##I wanted a view of the keys for the dataset
 
-output
-
-[ ]
-mental_health.describe() # To get a description of the data.
-output
-
-[ ]
 mental_health.tail() ## To get a view of the end of the dataset
-output
 
-[ ]
+mental_health.shape
+
+mental_health.info()
+
+mental_health.describe()
+
 mental_health.dtypes #To see all of the data types in the dataset
-output
-Timestamp               object
-Gender                  object
-Age                    float64
-Major                   object
-Year_of_study           object
-CGPA                    object
-Low_CGPA               float64
-High_CGPA              float64
-Mean_CGPA              float64
-Marital_status          object
-Depression_status       object
-Anxiety_status          object
-Panic_attack_status     object
-Treatment_status        object
-dtype: object
-[ ]
-mental_health.shape # To see how many rows and colums are in the data set
-output
-(101, 14)
-[ ]
+
 mental_health.keys() #List of the keys
 
-output
-Index(['Timestamp', 'Gender', 'Age', 'Major', 'Year_of_study', 'CGPA',
-       'Low_CGPA', 'High_CGPA', 'Mean_CGPA', 'Marital_status',
-       'Depression_status', 'Anxiety_status', 'Panic_attack_status',
-       'Treatment_status'],
-      dtype='object')
-[ ]
-mental_health.loc[1:3,:] #To look at the first few rows of the data set.
-output
-
-[ ]
 mental_health.isna().sum() #to check if there were many missing factors. The results came back as just one.
-output
-Timestamp              0
-Gender                 0
-Age                    1
-Major                  0
-Year_of_study          0
-CGPA                   0
-Low_CGPA               0
-High_CGPA              0
-Mean_CGPA              0
-Marital_status         0
-Depression_status      0
-Anxiety_status         0
-Panic_attack_status    0
-Treatment_status       0
-dtype: int64
-[ ]
-mental_health_v1 = mental_health
-mental_health_v1.rename(columns={"Marital_status": "Married","Depression_status": "Depressed","Anxiety_status":"Anxiety","Treatment_status":"Treated","Year_of_study":"Year","Panic_attack_status":"Panic"}, inplace=True)
 
-# Renamed columns to make data columns more clear and rename df with updated columns.
+mental_health.dropna(inplace=True) # Drop null value
+mental_health.head()
 
-
-[ ]
-mental_health_v1.drop('Timestamp', axis=1) # Removed timestamp
-
-
-output
-
-[ ]
 import pandas as pd
 import matplotlib.pyplot as plt #Imported matplotlib to show visulations
 
-Developed visuals for exploratory analysis of the data
-[ ]
+import seaborn as catplot
+from matplotlib import pyplot as plt
+import seaborn as sns
+
+# Developed visuals for exploratory analysis of the data
+
+mental_health.Gender.value_counts().plot(kind='bar',color='red',figsize=(3,3))
+plt.title("Distribution of Gender")
+plt.ylabel("Number of students")
+plt.show() # shows the Females and Male students a nearly equal for this dataset.
+
 # To show what the students majors are.
-mental_health_v1.Major.value_counts().plot(kind='bar',color='red',figsize=(11,5))
+mental_health.Age.value_counts().plot(kind='bar',color='red',figsize=(3,3))
+plt.title("Distribution of Ages")
+plt.ylabel("Number of students")
+plt.show() # shows thedistribution ages amongst the students
+
+# To show what the students majors are.
+mental_health.Major.value_counts().plot(kind='bar',color='red',figsize=(3,3))
 plt.title("Distribution of Majors")
 plt.ylabel("Number of students")
 plt.show() # shows the major distribution amongst the students
-output
 
-[ ]
-mental_health_v1.Gender.value_counts().plot(kind='bar',color='red',figsize=(4,4))
-plt.title("Gender Distribution")
-plt.ylabel("Number of students")
-plt.show()
-# To compare the gender of students in the study.
-output
+sns.displot(data=mental_health, x="Gender", col="Major", kde=True)
 
-[ ]
-mental_health_v1.Age.value_counts().plot(kind='bar',color='red',figsize=(4,4)) # Groups the ages of those in the study.
-plt.title("Age Distribution")
-plt.ylabel("Number of students")
-plt.show()
+sns.displot(data=mental_health, x="Age", col="Gender", kde=True)
 
+sns.displot(data=mental_health, x="Age", col="Depressed", kde=True)
 
-output
+sns.displot(data=mental_health, x="Gender", col="Anxiety", kde=True)
 
-[ ]
-mental_health_v1.Depressed.value_counts().plot(kind='pie', autopct='%.2f', colors=(['red', 'blue']))
+sns.pairplot(mental_health)
 
- # Shows students with depression versus those without depression.
-output
+sns.displot(data=mental_health, x="Gender", col="Treatment", kde=True)
 
-[ ]
-mental_health_v1.Anxiety.value_counts().plot(kind='pie', autopct='%1.1f%%', colors=(['red', 'blue']))
-#Show students with anxiety compare to those without anxiety.
-output
+mental_health.groupby('CGPA').agg(['mean', 'median', 'std', 'var']) # Used to verify which descriptive statistics are equal across CGPA and Age datasets.
 
-[ ]
-mental_health_v1.Panic.value_counts().plot(kind='pie', autopct='%1.1f%%', colors=(['red', 'blue']))
-#Student with Panic attacks compared to student without panic attacks
-output
-
-[ ]
-mental_health_v1.Treated.value_counts().plot(kind='pie', autopct='%1.1f%%', colors=(['red', 'blue']))
-# Shows students receiving treatement versus not recieving treatement.
-output
-
-[ ]
-mental_health_v1.Married.value_counts().plot(kind='pie', autopct='%1.1f%%', colors=(['red', 'blue']))
-
-# shows married students versus not married
-output
-
-[ ]
-mental_health_v1.Mean_CGPA.value_counts().plot(kind='pie', autopct='%1.1f%%', colors=(['red', 'blue','orange','gray','yellow']))
-#Since the study had only CGPA ranges. I calculated the average (Mean CGPA) CGPA for each student.
-#Shows the disbution of CGPA's of students in the study
-output
-
-[ ]
-mental_health_v1.Mean_CGPA.value_counts().plot(kind='bar',color='red',figsize=(4,4))
-plt.title("CGPA Distribution")
-plt.ylabel("Number of students")
-plt.show() # Shows number of students in each CGPA group
-output
-
-[ ]
-sns.pairplot(mental_health_v1) # To show data in a pairplot
-output
-
-[ ]
-mental_health_v1.groupby('Mean_CGPA').agg(['mean', 'median', 'std', 'var']) # Used to verify which descriptive statistics are equal across CGPA and Age datasets.
-output
-
-[ ]
-from scipy.stats import chi2_contingency #imported chi2 code for crosstab and stats
+from scipy.stats import chi2_contingency #imported chi2 code for crosstab and stats to compute a simple cross tabulation of two (or more) factors
 import scipy.stats as stats
 import numpy as np
-Correlation Tests between CGPA and Conditions(Panic, Anxiety and Depression) and lastly treated students and CGPAs using Crosstab (chi2 and pvalue).
-[ ]
+
 from pandas.core.reshape.pivot import crosstab
-crosstab = pd.crosstab(mental_health_v1['Mean_CGPA'], mental_health_v1['Panic']) # Used crosstab look at CGPAs and Panic to see if there is any correlation.
+crosstab = pd.crosstab(mental_health['CGPA'], mental_health['Panic']) # Used crosstab look at CGPAs and Panic to see if there is any correlation.
 crosstab
 #mental_health = mental_health.sort_values(by='CGPA', ascending=False)
 
-output
 
-[ ]
 stats.chi2_contingency(crosstab)
-#Pvalue is higher than the significance level of 0.05 this means that we can not reject the null hypothesis that panic disorders affects CGPAs.
-output
-Chi2ContingencyResult(statistic=7.375159555541737, pvalue=0.11734190187657079, dof=4, expected_freq=array([[ 2.69306931,  1.30693069],
-       [ 1.34653465,  0.65346535],
-       [ 2.69306931,  1.30693069],
-       [28.95049505, 14.04950495],
-       [32.31683168, 15.68316832]]))
-[ ]
-crosstab = pd.crosstab(mental_health_v1['Mean_CGPA'], mental_health_v1['Anxiety']) #A look at CGPAs and Anxiety to see if there is any correlation.
-crosstab
-output
+#Pvalue is higher than the significance level of 0.05 this means that we cannot reject the null hypothesis that panic disorders affects CGPAs.
 
-[ ]
-stats.chi2_contingency(crosstab)
-#Pvalue is much higher than the significance level of 0.05 this means that we cannot reject the null hypothesis that anxiety affects CGPAs.
-output
-Chi2ContingencyResult(statistic=3.52428691018233, pvalue=0.4741950886143802, dof=4, expected_freq=array([[ 2.65346535,  1.34653465],
-       [ 1.32673267,  0.67326733],
-       [ 2.65346535,  1.34653465],
-       [28.52475248, 14.47524752],
-       [31.84158416, 16.15841584]]))
-[ ]
-crosstab = pd.crosstab(mental_health_v1['Mean_CGPA'], mental_health_v1['Depressed']) #A look at CGPAs and Depression to see if there is any correlation.
-crosstab
-output
-
-[ ]
-stats.chi2_contingency(crosstab)
-#Pvalue is slightly higher the significance level of 0.05 this means that we cannot reject the null hypothesis that depression affects CGPAs.
-output
-Chi2ContingencyResult(statistic=8.997499706365986, pvalue=0.061162006797657424, dof=4, expected_freq=array([[ 2.61386139,  1.38613861],
-       [ 1.30693069,  0.69306931],
-       [ 2.61386139,  1.38613861],
-       [28.0990099 , 14.9009901 ],
-       [31.36633663, 16.63366337]]))
-[ ]
-crosstab = pd.crosstab(mental_health_v1['Mean_CGPA'], mental_health_v1['Treated']) #A look at CGPAs and treatment to see if there is any correlation.
+crosstab = pd.crosstab(mental_health['CGPA'], mental_health['Anxiety']) #A look at CGPAs and Anxiety to see if there is any correlation.
 crosstab
 
-output
-
-[ ]
 stats.chi2_contingency(crosstab)
-#Pvalue is much lower than than significance level of 0.05 this means that we can reject the null hypothesis that getting treatment affects CGPAs.
-output
-Chi2ContingencyResult(statistic=17.483040935672513, pvalue=0.0015567993612370854, dof=4, expected_freq=array([[ 3.76237624,  0.23762376],
-       [ 1.88118812,  0.11881188],
-       [ 3.76237624,  0.23762376],
-       [40.44554455,  2.55445545],
-       [45.14851485,  2.85148515]]))
-I used the statsmodel multiple Linear Regression (with Categorical Predictors) because it seemed to be the most appropriate for my project.
+#Pvalue is slightly lower than the significance level of 0.05 this means that we can reject the null hypothesis that anxiety affects CGPAs.
 
-[ ]
+crosstab = pd.crosstab(mental_health['CGPA'], mental_health['Depressed']) #A look at CGPAs and Depression to see if there is any correlation.
+crosstab
+
+stats.chi2_contingency(crosstab)
+#Pvalue is slightly lower the significance level of 0.05 this means that we can reject the null hypothesis that depression affects CGPAs.
+
+crosstab = pd.crosstab(mental_health['CGPA'], mental_health['Treatment']) #A look at CGPAs and treatment to see if there is any correlation.
+crosstab
+
+stats.chi2_contingency(crosstab)
+#Pvalue is slightly higher than the significance level of 0.05 which means that we cannot reject the null hypothesis that getting treatment affects CGPAs.
+
+# Numerical model: I used the statsmodel multiple Linear Regression (with Categorical Predictors) because it seemed to be the most appropriate for my project.
+
 import statsmodels.formula.api as smf
-mental_health_v1= smf.ols("Mean_CGPA ~ Panic + Anxiety + Depressed + Treated", data=mental_health_v1).fit()
-mental_health_v1.summary()
-output
+mental_health = smf.ols("CGPA ~ Anxiety + Depressed + Panic + Treatment + Age + Major", data=mental_health).fit()
+mental_health.summary()
+##Interpreting regression coefficients:The statsmodel Linear regresson does not show a correlation between the variables in CGPAs.
+#According this the stats model we can reject the null hypothesis since each variable is lower than the signicance level 0.05.
 
-Interpreting regression coefficients: The results for Linear regression for Anxiety (0.2145) and Panic (0.0373) shows an increase, but depression (-0.0207) shows a decrease, which is similiar to the results in the crosstab corelation pvalue analysis.
+# Model validation techniques
 
-[ ]
-mental_health_v1.keys() #Changed strings to numerical values to run validation model.
-output
-Index(['Gender', 'Age', 'Major', 'Year', 'Low_CGPA', 'High_CGPA', 'Mean_CGPA',
-       'Married', 'Depressed', 'Anxiety', 'Panic', 'Treated'],
-      dtype='object')
-[ ]
-mental_health_v1.drop("Timestamp",axis=1,inplace=True) # Removed timestamp when using Rainforest validation method was causing an error as it was assumed as a string.
-[ ]
-mental_health_v1.drop("CGPA",axis=1,inplace=True)  # Removed CGPA when using Rainforest validation method it was assmumed to be a string and was causing an error.
-[ ]
-mental_health_v1.dropna(inplace=True) # when I tried to run the validation, I realized I had not remove the Nan data instance, which caused an error.
-[ ]
-mh = mental_health_v1 # created a new name for the dataset with all the changes to to numerical data.
-mh.head() # I wanted to see what the current data set looked like.
-output
 
-[ ]
-mh['Gender'] = mh['Gender'].apply(lambda x: 0 if x == 'Female' else 1) #converted strings to numbers to run validation of model
-mh['Gender'] = mh['Gender'].astype('category')
-[ ]
-for column in ['Married','Depressed','Anxiety','Panic','Treated', 'Major']:
-    mh[column] = mh[column].apply(lambda x: 0 if x == 'No' else 1)
-    mh[column] = mh[column].astype('category') #converted strings to numbers to run validation of model
-[ ]
-mh['Year'] = mh['Year'].str.split().str[1].astype(int) #converted strings to numbers to run validation of model
-mh['Year'].unique()
-output
-array([1, 2, 3, 4])
-Applied model validation techniques:
-[ ]
-from sklearn.model_selection import train_test_split #importing sklearn  and importing train_test_split
-X = mh.drop(["Depressed"],axis=1) # dropped Depressed variable to reshape my data
-y= mh["Depressed"] # added depressed on my y axis.
-X_train, X_test, y_train, y_test = train_test_split(X, y,test_size=0.2,random_state =15)
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_val_score, train_test_split
-from sklearn.metrics import confusion_matrix, accuracy_score, f1_score
 
-RF = RandomForestClassifier( # Used RandomForest Classifier to validate my model
-    max_depth=13,
-    max_features='log2',
-    min_samples_leaf=1,
-    min_samples_split=5,
-    n_estimators=500
-)
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import matplotlib.pyplot as plt # data visualization
+import seaborn as sns # statistical data visualization
+%matplotlib inline
 
-RF.fit(X_train, y_train) #fit test
-ypred = RF.predict(X_test)
 
-cm = confusion_matrix(y_test, ypred)
-accuracy = accuracy_score(y_test, ypred)
-f1_macro = f1_score(y_test, ypred, average='macro')
 
-print("Confusion Matrix:", cm)
-print("Accuracy Score:", accuracy)
-print("F1-Score:", f1_macro)
-output
-Confusion Matrix: [[15  1]
- [ 1  3]]
-Accuracy Score: 0.9
-F1-Score: 0.84375
-Used confusion matrix because my dataset was unbalanced. Both Accuracy and F1-score were high (close to 100%) which upon interpretation means my model is very accurate.
+import warnings
 
-[ ]
-from scipy.stats import randint #imported packages
-from sklearn.model_selection import RandomizedSearchCV, train_test_split
-from sklearn.metrics import accuracy_score, confusion_matrix, precision_score, recall_score, ConfusionMatrixDisplay
-[ ]
-param_dist = {'n_estimators': randint(50,500),
-              'max_depth': randint(1,20)}
+warnings.filterwarnings('ignore')
 
-# Create a random forest classifier
-rf = RandomForestClassifier()
+from google.colab import drive #code to mount Google Drive
+drive.mount('/content/drive')
 
-# Use random search to find the best hyperparameters
-rand_search = RandomizedSearchCV(rf,
-                                 param_distributions = param_dist,
-                                 n_iter=5,
-                                 cv=5)
+import pandas as pd # importing pandas
+mental_health=pd.read_csv('/content/drive/MyDrive/data/student_mh.csv') #uploading dataset
 
-# Fit the random search object to the data
-rand_search.fit(X_train, y_train)
-output
+mental_health.head()
 
-[ ]
-# Create a variable for the best model
-best_RF = rand_search.best_estimator_
+mental_health.shape
 
-# Print the best hyperparameters
-print('Best hyperparameters:',  rand_search.best_params_)
-output
-Best hyperparameters: {'max_depth': 3, 'n_estimators': 493}
-[ ]
-y_pred = best_RF.predict(X_test)
+col_names = ['Age', 'Major', 'Gender', 'CGPA', 'Panic', 'Anxiety', 'Treatment','Depressed','Married']
 
-# Create the confusion matrix
-cm = confusion_matrix(y_test, y_pred)
 
-ConfusionMatrixDisplay(confusion_matrix=cm).plot();
-output
+mental_health.columns = col_names
 
-[ ]
-from sklearn.tree import export_graphviz # Tree Visualisation
-from IPython.display import Image
-import graphviz
-[ ]
-for i in range(3): # Decision Tree with variables.
-    tree = RF.estimators_[i]
-    dot_data = export_graphviz(tree,
-                               feature_names=X_train.columns,
-                               filled=True,
-                               max_depth=2,
-                               impurity=False,
-                               proportion=True)
-    graph = graphviz.Source(dot_data)
-    display(graph)
-output
+col_names
 
-Post analysis explanatory visuals:
-[ ]
+mental_health['CGPA'].value_counts()
+
+mental_health.isnull().sum()
+
+X = mental_health.drop(['CGPA'], axis=1)
+
+y = mental_health['CGPA']
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.33, random_state = 42)
+
+# check the shape of X_train and X_test
+
+X_train.shape, X_test.shape
+
+X_train.dtypes
+
+X_train.head()
+
+pip install --upgrade category_encoders
+
+import category_encoders as ce
+
+encoder = ce.OrdinalEncoder(cols=['Age', 'Major', 'Gender', 'Panic', 'Anxiety', 'Treatment','Depressed','Married'])
+
+
+X_train = encoder.fit_transform(X_train)
+
+X_test = encoder.transform(X_test)
+
+X_train.head()
+
+X_test.head()
+
+ from sklearn.ensemble import RandomForestRegressor
+>>> from sklearn.datasets import make_regression
+>>> X, y = make_regression(n_features=4, n_informative=2,
+...                        random_state=0, shuffle=False)
+>>> regr = RandomForestRegressor(max_depth=2, random_state=0)
+>>> regr.fit(X, y)
+RandomForestRegressor(...)
+>>> print(regr.predict([[0, 0, 0, 0]]))
+[-8.32987858]
+
+clf = RandomForestRegressor(n_estimators=100, random_state=0)
+
+
+
+# fit the model to the training set
+
+clf.fit(X_train, y_train)
+
+# view the feature scores
+
+feature_scores = pd.Series(clf.feature_importances_, index=X_train.columns).sort_values(ascending=False)
+
+feature_scores # After reviewing the features scores the most important feature is age and major and least important feature is treatment and depression.
+
+# Explanatory visuals
+
+# Creating a seaborn bar plot
+
+sns.barplot(x=feature_scores, y=feature_scores.index)
+
+
+
+# Add labels to the graph
+
+plt.xlabel('Feature Importance Score')
+
+plt.ylabel('Features')
+
+
+
+# Add title to the graph
+
+plt.title("Visualizing Important Features")
+
+
+
+# Visualize the graph
+
+plt.show()
+
 import pandas as pd
 import matplotlib.pyplot as plt
-[ ]
+
+# Import seaborn
 import seaborn as sns
-import warnings
-warnings.filterwarnings('ignore')
-grid = sns.stripplot(data = mh, x = "Year", y = "Mean_CGPA", hue = "Anxiety", dodge = True, jitter = 0.3, size = 3.5)
-plt.grid(axis = 'x')
-plt.show()
-# shows Mean CGPA, Year of student and Anxiety # 0 = not present 1 = prsent
-# 0 = not present 1 = present
-output
 
-[ ]
-# Imported seaborn
-import seaborn as sns
-sns.lmplot(data=mh, x="Mean_CGPA", y="Panic", col="Panic", hue="Treated")
-# To show the relationship between Panic, Treatment and Mean CGPA
-# 0 = not present 1 = present
-output
+sns.displot(data=mental_health, x="CGPA", col="Age", kde=True) # To show the relationship between the age of the students and CGPA
 
-[ ]
-sns.displot(data=mh, x="Mean_CGPA", col="Depressed", kde=True) # To show the relationship between Depression and Mean CGPA
-# 0 = not present 1 = present
-output
+sns.displot(data=mental_health, x="CGPA", col="Major", kde=True) # To show the relationship between the major of the students and CGPA.
 
-Findings: Analysis showed that anxiety and panic disorders may have some affect CGPAs. Depression slightly affected CGPAs and being treated had no effect on CGPAs.This confirms that we can not regret the hypothesis that anxiety, panic disorders and depresson and student sucess in relation to CGPAs.
+# Relevant insights
 
+# Insights: Analysis showed that there was no significant correlation between those with mental health issues and those without.  CGPAs were pretty similiar amongst the 7,000 students regardless of mental health status.
+
+# Thus we can reject the null hypothesis that mental health was a significant feature for student's CGPAs.
+
+# Age and major were the only factors that stood out in the study. In regards to age and major, we cannot regret the null hypthesis.
