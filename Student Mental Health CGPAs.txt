@@ -6,7 +6,7 @@ drive.mount('/content/drive')
 import pandas as pd # importing pandas
 mental_health=pd.read_csv('/content/drive/MyDrive/data/student_mh.csv') #uploading dataset
 
-**Hypothesis**:  Does Mental health conditions or other factors like age and major affect students cumulative grade point average (CGPAs)?
+**Hypothesis**:  Do mental health conditions or other factors like age and major affect students' cumulative grade point average (CGPAs)?
 
 **Variables:**
 
@@ -19,7 +19,6 @@ mental_health=pd.read_csv('/content/drive/MyDrive/data/student_mh.csv') #uploadi
 - Major
 
 
-**Why I chose this topic:** I currently work as an Enrollment Advisor and I see many variables that affect student sucess and I wanted to know what role mental health plays for the student to better support them sucessfully completing their programs with higher cumulative grade point average (CGPAs).
 
 # Data cleansing and data review:
 
@@ -43,7 +42,7 @@ mental_health.dropna(inplace=True) # Drop null value
 mental_health.head()
 
 import pandas as pd
-import matplotlib.pyplot as plt #Imported matplotlib to show visulations
+import matplotlib.pyplot as plt #Imported matplotlib to show visualizations
 
 import seaborn as catplot
 from matplotlib import pyplot as plt
@@ -54,15 +53,15 @@ import seaborn as sns
 mental_health.Gender.value_counts().plot(kind='bar',color='red',figsize=(3,3))
 plt.title("Distribution of Gender")
 plt.ylabel("Number of students")
-plt.show() # shows the Females and Male students a nearly equal for this dataset.
+plt.show() # shows that Females and Male students are nearly equal for this dataset.
 
-# To show what the students majors are.
+# To show what the student's majors are.
 mental_health.Age.value_counts().plot(kind='bar',color='red',figsize=(3,3))
 plt.title("Distribution of Ages")
 plt.ylabel("Number of students")
-plt.show() # shows thedistribution ages amongst the students
+plt.show() # shows the distribution of ages amongst the students
 
-# To show what the students majors are.
+# To show what the students' majors are.
 mental_health.Major.value_counts().plot(kind='bar',color='red',figsize=(3,3))
 plt.title("Distribution of Majors")
 plt.ylabel("Number of students")
@@ -87,39 +86,39 @@ import scipy.stats as stats
 import numpy as np
 
 from pandas.core.reshape.pivot import crosstab
-crosstab = pd.crosstab(mental_health['CGPA'], mental_health['Panic']) # Used crosstab look at CGPAs and Panic to see if there is any correlation.
+crosstab = pd.crosstab(mental_health['CGPA'], mental_health['Panic']) # Used crosstab to look at CGPAs and Panic to see if there is any correlation.
 crosstab
 #mental_health = mental_health.sort_values(by='CGPA', ascending=False)
 
 
 stats.chi2_contingency(crosstab)
-#Pvalue is higher than the significance level of 0.05 this means that we cannot reject the null hypothesis that panic disorders affects CGPAs.
+# P-value is higher than the significance level of 0.05, which means that we cannot reject the null hypothesis that panic disorders affect CGPAs.
 
 crosstab = pd.crosstab(mental_health['CGPA'], mental_health['Anxiety']) #A look at CGPAs and Anxiety to see if there is any correlation.
 crosstab
 
 stats.chi2_contingency(crosstab)
-#Pvalue is slightly lower than the significance level of 0.05 this means that we can reject the null hypothesis that anxiety affects CGPAs.
+# P-value is slightly lower than the significance level of 0.05, which means that we can reject the null hypothesis that anxiety affects CGPAs.
 
 crosstab = pd.crosstab(mental_health['CGPA'], mental_health['Depressed']) #A look at CGPAs and Depression to see if there is any correlation.
 crosstab
 
 stats.chi2_contingency(crosstab)
-#Pvalue is slightly lower the significance level of 0.05 this means that we can reject the null hypothesis that depression affects CGPAs.
+# P-value is slightly lower than the significance level of 0.05, which means that we can reject the null hypothesis that depression affects CGPAs.
 
 crosstab = pd.crosstab(mental_health['CGPA'], mental_health['Treatment']) #A look at CGPAs and treatment to see if there is any correlation.
 crosstab
 
 stats.chi2_contingency(crosstab)
-#Pvalue is slightly higher than the significance level of 0.05 which means that we cannot reject the null hypothesis that getting treatment affects CGPAs.
+# P-value is slightly higher than the significance level of 0.05, which means that we cannot reject the null hypothesis that getting treatment affects CGPAs.
 
 # Numerical model: I used the statsmodel multiple Linear Regression (with Categorical Predictors) because it seemed to be the most appropriate for my project.
 
 import statsmodels.formula.api as smf
 mental_health = smf.ols("CGPA ~ Anxiety + Depressed + Panic + Treatment + Age + Major", data=mental_health).fit()
 mental_health.summary()
-##Interpreting regression coefficients:The statsmodel Linear regresson does not show a correlation between the variables in CGPAs.
-#According this the stats model we can reject the null hypothesis since each variable is lower than the signicance level 0.05.
+##Interpreting regression coefficients: The statsmodel Linear regression does not show a correlation between the variables in CGPAs.
+#According to this, the stats model, we can reject the null hypothesis since each variable is lower than the significance level 0.05.
 
 # Model validation techniques
 
@@ -207,11 +206,11 @@ clf = RandomForestRegressor(n_estimators=100, random_state=0)
 
 clf.fit(X_train, y_train)
 
-# view the feature scores
+# View the feature scores
 
 feature_scores = pd.Series(clf.feature_importances_, index=X_train.columns).sort_values(ascending=False)
 
-feature_scores # After reviewing the features scores the most important feature is age and major and least important feature is treatment and depression.
+feature_scores # After reviewing the feature scores, the most important features are age and major, and the least important features are treatment and depression.
 
 # Explanatory visuals
 
@@ -251,8 +250,8 @@ sns.displot(data=mental_health, x="CGPA", col="Major", kde=True) # To show the r
 
 # Relevant insights
 
-# Insights: Analysis showed that there was no significant correlation between those with mental health issues and those without.  CGPAs were pretty similiar amongst the 7,000 students regardless of mental health status.
+# Insights: Analysis showed that there was no significant correlation between those with mental health issues and those without.  CGPAs were pretty similar amongst the 7,000 students regardless of mental health status.
 
-# Thus we can reject the null hypothesis that mental health was a significant feature for student's CGPAs.
+# Thus we can reject the null hypothesis that mental health was a significant feature for students' CGPAs.
 
-# Age and major were the only factors that stood out in the study. In regards to age and major, we cannot regret the null hypthesis.
+# Age and major were the only factors that stood out in the study. In regards to age and major, we cannot reject the null hypothesis.
